@@ -15,11 +15,14 @@ def current_page(default=1):
         return default
 
 
+def hash_password(plaintext):
+    return bcrypt.hashpw(plaintext.encode('utf-8'), PASSWORD_SALT)
+
 def authenticate(username, password):
     user = User.query.filter(User.username == username).first()
     if not user:
         return False
-    elif bcrypt.hashpw(password.encode('utf-8'), PASSWORD_SALT) == user.password:
+    elif hash_password(password) == user.password:
         return user
     else:
         return False
