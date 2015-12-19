@@ -9,7 +9,7 @@ from flask import (
     abort, render_template, flash, g, request, redirect, make_response, url_for)
 
 from . import app
-from .lib import current_page, authenticate, validate_signup, create_user, hash_password, validate_password
+from .lib import current_page, authenticate, validate_signup, create_user, hash_password, validate_password, send_reset_password_email
 from .models import (
     AREA_ORDER_MAP,
     db,
@@ -190,11 +190,6 @@ def logout():
     flash('Logged out successfully!', 'info')
     return response
 
-
-def send_password_reset_email(*args):
-    for i in args:
-        print i
-
 @app.route('/reset_password', methods=['GET', 'POST'])
 def reset_password():
     if request.method == 'GET':
@@ -233,7 +228,7 @@ def reset_password():
             key = token.key
             db.session.add(token)
             db.session.commit()
-            send_password_reset_email(email, key)
+            send_reset_password_email(email, key)
             flash('Password reset email sent!', 'success')
             return render_template('/index.html')
 
